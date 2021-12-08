@@ -1,3 +1,11 @@
+# OTBI project
+
+A project under the supervision of Ralitsa Raicheva, phD. 
+Oncological treatment - budjet impact. 
+
+
+
+
 # The File [rdf_cost](rdf_cost.csv) 
 - ATC Anatomical Therapeutic Chemical code, factor variable
 - INN International nonproprietary name, factor (char) variable
