@@ -1,0 +1,27 @@
+---
+title: "OTBI"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(cache = TRUE, cache.lazy = FALSE, warning = FALSE, message = FALSE, echo = TRUE, dpi = 180, fig.width = 8, fig.height = 5)
+library(tidyverse)
+library(silgelib)
+theme_set(theme_plex())
+update_geom_defaults("rect", list(fill = "midnightblue", alpha = 0.8))
+library(gt)
+library(lubridate)
+```
+
+```{r}
+rdf <- read.csv("https://raw.githubusercontent.com/kostadinoff/Data/main/OTBI/rdf_cost.csv", stringsAsFactors=TRUE) %>% 
+as_tibble() %>% 
+  select(-"X")
+
+rdf$date <- dmy(rdf$date)
+rdf$date = as.Date(rdf$date)
+
+```
+
+
