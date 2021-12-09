@@ -14,6 +14,9 @@ theme_set(theme_plex())
 update_geom_defaults("rect", list(fill = "midnightblue", alpha = 0.8))
 library(gt)
 library(lubridate)
+library(extrafont)
+loadfonts(device = "win")
+library(ggplot2)
 library(flextable)
 library(tidytext)
 ```
@@ -69,9 +72,26 @@ cost_per_INN =
   coord_flip()+
   scale_x_reordered()+
   theme(legend.position="none")+
-  labs(title= "Разходи на НЗОК за таргетни онкологични медикаменти", subtitle = " log на разходите по по година",
-       y=" ", x= " ") + theme(axis.title = element_text(family = "Courier")) +labs(alpha = 0.6)
+  labs(title= "Разходи на НЗОК за таргетни онкологични медикаменти",
+       y=" десетичен логаритъм на разходите", x= " ") + theme(axis.title = element_text(family = "Courier")) +labs(alpha = 0.6)
 cost_per_INN
 ```
 
+```{r фигура 3, echo=TRUE, message=FALSE, warning=FALSE}
+time_df= rdf %>% 
+  group_by(year_Q) %>% 
+  summarise(cost= sum(QV)) %>% 
+  mutate(rate = ((cost-lag(cost))/lag(cost))) %>%
+  ungroup() %>% 
+  ggplot(mapping=aes(x=year_Q, y=rate, fill=year_Q)) +
+  geom_col() +
+  scale_y_continuous(labels = scales::percent)+
+  coord_flip()+
+  theme(legend.position="none")+
+  labs(title= " Верижен индекс на промяна по отчетни тримесечия", y=" % промяна", x= " ") 
+  
+time_df
+
+ 
+```
 
