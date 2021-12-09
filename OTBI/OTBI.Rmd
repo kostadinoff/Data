@@ -55,7 +55,7 @@ plot_Q_cost = rdf %>%
   
 plot_Q_cost
 ```
-```{r фигура 2, echo=TRUE, message=FALSE, warning=FALSE}
+```{r фигура 2, echo=TRUE, fig.height=20, fig.width=7, message=FALSE, warning=FALSE}
 cost_per_INN = 
   rdf %>% 
   group_by(INN, year) %>% 
@@ -65,10 +65,12 @@ cost_per_INN =
            INN = reorder_within(INN, sum, year)) %>%
   ggplot(aes(INN, log(sum,10), fill=INN)) +
   geom_col()+
-  facet_wrap(~year, scales = "free_y")+
+  facet_wrap(~year, scales = "free_y", ncol = 1)+
   coord_flip()+
   scale_x_reordered()+
-  theme(legend.position="none")
+  theme(legend.position="none")+
+  labs(title= "Разходи на НЗОК за таргетни онкологични медикаменти", subtitle = " log на разходите по по година",
+       y=" ", x= " ") + theme(axis.title = element_text(family = "Courier")) +labs(alpha = 0.6)
 cost_per_INN
 ```
 
