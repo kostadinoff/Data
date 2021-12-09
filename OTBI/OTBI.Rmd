@@ -3,6 +3,8 @@ title: "OTBI"
 output: html_notebook
 ---
 
+# Оценка на разходите
+
 ```{r setup, include=FALSE}
 library(knitr)
 knitr::opts_chunk$set(cache = TRUE, cache.lazy = FALSE, warning = FALSE, message = FALSE, echo = TRUE, dpi = 180, fig.width = 8, fig.height = 5)
@@ -12,16 +14,59 @@ theme_set(theme_plex())
 update_geom_defaults("rect", list(fill = "midnightblue", alpha = 0.8))
 library(gt)
 library(lubridate)
+library(flextable)
 ```
 
+От данните на НЗОК за разходи за медикаментозно лечение през периода 2017-2021 г. са филтрирани разходите таргетните медикаменти. Разходите са представени в тримесечен период. 
+
 ```{r}
+#зареждане на данните за разходите
 rdf <- read.csv("https://raw.githubusercontent.com/kostadinoff/Data/main/OTBI/rdf_cost.csv", stringsAsFactors=TRUE) %>% 
 as_tibble() %>% 
   select(-"X")
-
+# деклариране на данните като дата
 rdf$date <- dmy(rdf$date)
 rdf$date = as.Date(rdf$date)
 
+```
+
+```{r таблица 1, echo=TRUE, message=FALSE, warning=FALSE, paged.print=TRUE}
+costs = rdf %>% 
+  group_by(year_Q) %>% 
+  dplyr::summarise(sum(QV)) %>% 
+  flextable()
+costs
+```
+
+Най-висок разход за медикаментите в интерес на изследването са осъществени през четвъртото тримесечие на 2020г. като възлизат на $675,710,011$ лв. Най-ниските разходи се наблюдават в началото на периода при въвеждането на оценката на здравни технологии и възлиза на $8,192,903$. 
+
+```{r фигура 1, echo=TRUE, message=FALSE, warning=FALSE}
+plot_Q_cost = rdf %>% 
+  group_by(year_Q) %>% 
+  dplyr::summarise(sum= sum(QV)) %>% 
+  ggplot(aes(year_Q, sum, fill= year_Q))+
+  geom_col()+
+  scale_y_continuous(labels=scales::dollar_format(scale = .001, suffix = " мил.лв", prefix = " "))+
+  coord_flip()+
+  theme(legend.position="none")+
+  labs(title= "Разходи на НЗОК за таргетни онкологични медикаменти", subtitle = " в милиони лева, по тримесечие",
+       y=" ", x= " ")
+  
+plot_Q_cost
+```
+```{r}
+plot_INN_cost = rdf %>% 
+  group_by(INN) %>% 
+  dplyr::summarise(sum= sum(QV)) %>% 
+  mutate(INN = fct_reorder(INN, sum)) %>%
+  ggplot(aes(INN, sum, fill= INN))+
+  geom_col()+
+  scale_y_continuous(labels=scales::dollar_format(scale = .001, suffix = " мил.лв", prefix = " "))+
+  coord_flip()+
+  theme(legend.position="none")+
+  labs(title= "Разходи на НЗОК за таргетни онкологични медикаменти", subtitle = " в милиони лева, по тримесечие",
+       y=" ", x= " ")
+plot_INN_cost
 ```
 
 
