@@ -20,6 +20,7 @@ library(ggplot2)
 library(flextable)
 library(tidytext)
 library(ggstatsplot)
+library(afex)
 ```
 
 От данните на НЗОК за разходи за медикаментозно лечение през периода 2017-2021 г. са филтрирани разходите таргетните медикаменти. Разходите са представени в тримесечен период. 
@@ -97,6 +98,7 @@ time_df
 
 year_dif =
   rdf %>% 
+  dplyr::filter(!year =="2021") %>% 
   group_by(year,INN) %>% 
   dplyr::summarise(costs= sum(QV)+1) %>% 
   dplyr::mutate(costs = log(costs)) %>% 
