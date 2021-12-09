@@ -15,6 +15,7 @@ update_geom_defaults("rect", list(fill = "midnightblue", alpha = 0.8))
 library(gt)
 library(lubridate)
 library(flextable)
+library(tidytext)
 ```
 
 От данните на НЗОК за разходи за медикаментозно лечение през периода 2017-2021 г. са филтрирани разходите таргетните медикаменти. Разходите са представени в тримесечен период. 
@@ -54,19 +55,21 @@ plot_Q_cost = rdf %>%
   
 plot_Q_cost
 ```
-```{r}
-plot_INN_cost = rdf %>% 
-  group_by(INN) %>% 
+```{r фигура 2, echo=TRUE, message=FALSE, warning=FALSE}
+cost_per_INN = 
+  rdf %>% 
+  group_by(INN, year) %>% 
   dplyr::summarise(sum= sum(QV)) %>% 
-  mutate(INN = fct_reorder(INN, sum)) %>%
-  ggplot(aes(INN, sum, fill= INN))+
+  ungroup() %>% 
+  mutate(INN = as.factor(INN),
+           INN = reorder_within(INN, sum, year)) %>%
+  ggplot(aes(INN, log(sum,10), fill=INN)) +
   geom_col()+
-  scale_y_continuous(labels=scales::dollar_format(scale = .001, suffix = " мил.лв", prefix = " "))+
+  facet_wrap(~year, scales = "free_y")+
   coord_flip()+
-  theme(legend.position="none")+
-  labs(title= "Разходи на НЗОК за таргетни онкологични медикаменти", subtitle = " в милиони лева, по тримесечие",
-       y=" ", x= " ")
-plot_INN_cost
+  scale_x_reordered()+
+  theme(legend.position="none")
+cost_per_INN
 ```
 
 
