@@ -143,6 +143,9 @@ time_df= rdf %>%
 time_df
 ```
 
+
+
+
 ```{r фигура 4, echo=TRUE, fig.height=6, fig.width=8, message=FALSE, warning=FALSE}
 
 year_dif =
