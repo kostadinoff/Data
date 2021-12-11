@@ -1,8 +1,6 @@
 ---
 title: "OTBI"
 output: html_notebook
-editor_options: 
-  chunk_output_type: inline
 ---
 
 # Оценка на разходите
@@ -17,8 +15,7 @@ knitr::opts_chunk$set(
 	warning = FALSE,
 	cache = TRUE,
 	cache.lazy = FALSE,
-	dpi = 180
-)
+	dpi = 180)
 library(tidyverse)
 library(silgelib)
 theme_set(theme_plex())
@@ -33,6 +30,7 @@ library(tidytext)
 library(ggstatsplot)
 library(afex)
 library(easystats)
+library(rstatix)
 ```
 
 От данните на НЗОК за разходи за медикаментозно лечение през периода 2017-2021 г. са филтрирани разходите онкологичните медикаменти, преминали оценка на здравни технологии. Разходите са представени в тримесечен период.
@@ -60,6 +58,30 @@ costs = rdf %>%
   autofit()
 costs
 ```
+
+```{r таблица 2, echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
+report_1 = rdf %>% 
+  group_by(year, year_Q) %>% 
+  dplyr::summarise(value= sum(QV)) %>% 
+  mutate(year= as.factor(year)) %>% 
+  get_summary_stats(type = "common") %>% 
+  select(- c(variable, n, se, ci)) %>% 
+  flextable() %>% 
+  set_header_labels(
+    values = list(
+       year = "година",
+       min= "min",
+       max= "max",
+       median= "медиана на разходите",
+       iqr = "IQR",
+       mean= "среден разход",
+       sd = "SD"
+       ))%>%   
+  autofit()
+report_1 
+  
+```
+
 
 Най-висок разход, за медикаментите в интерес на изследването, са осъществени през четвъртото тримесечие на 2020г. като възлизат на $675,710,011$ лв. Най-ниските разходи се наблюдават в началото на периода при въвеждането на оценката на здравни технологии и възлиза на $8,192,903$.
 
@@ -141,3 +163,7 @@ year_dif =
 year_dif
 
 ```
+
+
+to do
+- base index https://stackoverflow.com/questions/61805979/calculate-indices-with-base-year-and-relative-percentage-change
