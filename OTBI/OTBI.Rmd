@@ -191,4 +191,20 @@ shared = rdf %>%
           legend.box = "vertical")
 shared
 ```
+```{r}
+rdf_new = read.csv("rdful.csv") %>% 
+  as.tibble() %>% 
+  mutate(ATC = str_replace_all(ATC, "\t\n", "")) 
+
+rdf_new$HTA_logged_in = dmy(rdf_new$HTA_logged_in)
+rdf_new$HTA_logged_in = as.Date(rdf_new$HTA_logged_in)
+
+rdf_new$Date_marketing_EU = dmy(rdf_new$Date_marketing_EU)
+rdf_new$Date_marketing_EU = as.Date(rdf_new$Date_marketing_EU)
+
+
+rdf_new$HTA_finalized = dmy(rdf_new$HTA_finalized)
+rdf_new$HTA_finalized = as.Date(rdf_new$HTA_finalized)
+
+```
 
