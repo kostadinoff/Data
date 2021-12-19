@@ -167,6 +167,31 @@ year_dif
 
 ```
 
+```{r фигура 5, echo=TRUE, fig.height=6, fig.width=8, message=FALSE, warning=FALSE}
 
-to do
-- base index https://stackoverflow.com/questions/61805979/calculate-indices-with-base-year-and-relative-percentage-change
+total = tibble(year =c("2017","2018","2019","2020"),
+               total= c(3452816000,3859978000,4350003000,4744704900))
+shared = rdf %>% 
+  group_by(year) %>% 
+  dplyr::summarise(med_cost = sum(QV)) %>% 
+  filter(year != "2021") %>% 
+  mutate(year= as.character(year)) %>% 
+  inner_join(total) %>% 
+  mutate(year= as.factor(year)) %>% 
+  mutate(other = total-med_cost) %>% 
+  select(-total) %>% 
+  pivot_longer(cols = 2:3, names_to = "type", values_to = "cost") %>% 
+  mutate(type= as.factor(type)) %>% 
+  ggplot(aes(year, cost))+
+  geom_col(aes(fill=type))+
+  stat_count(aes(label=paste0(sprintf("%1.1f", ..count../sum(..count..)*100),
+                              "%n", ..count..), y=0.5*..count..), 
+             geom="text", colour="white", size=4, position=position_dodge(width=1))
+  labs(x= "Година", y= "Общи разходи")+
+  scale_fill_discrete(name = "Вид разходи", labels = c("ОЗТ онкологични медикаменти", "Всички останали"))+
+  scale_y_continuous(labels=scales::dollar_format(scale = .001, suffix = " мил.лв", prefix = " "))+
+  theme(legend.position = "bottom",
+          legend.box = "vertical")
+shared
+```
+
