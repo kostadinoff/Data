@@ -184,9 +184,6 @@ shared = rdf %>%
   mutate(type= as.factor(type)) %>% 
   ggplot(aes(year, cost))+
   geom_col(aes(fill=type))+
-  stat_count(aes(label=paste0(sprintf("%1.1f", ..count../sum(..count..)*100),
-                              "%n", ..count..), y=0.5*..count..), 
-             geom="text", colour="white", size=4, position=position_dodge(width=1))
   labs(x= "Година", y= "Общи разходи")+
   scale_fill_discrete(name = "Вид разходи", labels = c("ОЗТ онкологични медикаменти", "Всички останали"))+
   scale_y_continuous(labels=scales::dollar_format(scale = .001, suffix = " мил.лв", prefix = " "))+
