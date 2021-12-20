@@ -31,6 +31,7 @@ library(ggstatsplot)
 library(afex)
 library(easystats)
 library(rstatix)
+require("ggrepel")
 ```
 
 От данните на НЗОК за разходи за медикаментозно лечение през периода 2017-2021 г. са филтрирани разходите онкологичните медикаменти, преминали оценка на здравни технологии. Разходите са представени в тримесечен период.
@@ -222,10 +223,23 @@ rdf_new = rdf %>%
 ```{r}
 plot_dif =
   rdf_new %>% 
-  ggplot(aes(HTA_logged_in, HTA_finalized, size=log(costs)))+
+  mutate(Accelerated_assessment= as.factor(Accelerated_assessment)) %>% 
+  ggplot(aes(HTA_logged_in, HTA_finalized, size=costs, color= costs))+
   geom_point()+
-  geom_smooth()
+  geom_smooth(se= F)+
+  geom_label_repel(aes(label = INN,
+                    fill = factor(Accelerated_assessment)),color = 'white',
+                    size = 5) +
+   theme(legend.position = "bottom",
+         legend.box = "vertical")+
+   scale_size_continuous(range = c(7, 10))+
+   scale_colour_continuous(name= "разходи 17-21г.", guide=FALSE, labels=scales::dollar_format(scale = .001, suffix = " мил.лв", prefix = " "))+
+   guides(colour=guide_colourbar(barwidth=30,label.position="bottom"), size = "none")+
+   scale_fill_discrete(name = "Ускорена оценка", labels = c("Без ускорена оценка", "С ускорена оценка"))+
+   labs(x= "Дата на входиране на доклада", y= "Дата на финализиране на оценката")
+
 ```
+
 
 ```{r}
 
