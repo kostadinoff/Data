@@ -206,5 +206,30 @@ rdf_new$Date_marketing_EU = as.Date(rdf_new$Date_marketing_EU)
 rdf_new$HTA_finalized = dmy(rdf_new$HTA_finalized)
 rdf_new$HTA_finalized = as.Date(rdf_new$HTA_finalized)
 
+rdf_new =
+  rdf_new %>% 
+  mutate(final_log_dif = HTA_finalized - HTA_logged_in, 
+         market_log_dif = HTA_logged_in - Date_marketing_EU,
+         final_market_dif =HTA_finalized- Date_marketing_EU )
+
+rdf_new = rdf %>% 
+  group_by(ATC, INN) %>% 
+  dplyr::summarise(costs = sum(QV)) %>% 
+  inner_join(rdf_new)
+
+```
+
+```{r}
+plot_dif =
+  rdf_new %>% 
+  ggplot(aes(HTA_logged_in, HTA_finalized, size=log(costs)))+
+  geom_point()+
+  geom_smooth()
+```
+
+```{r}
+
+model = lm(final_log_dif ~ log(costs+1), data = rdf_new)
+
 ```
 
